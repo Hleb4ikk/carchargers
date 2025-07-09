@@ -16,12 +16,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Filter as FilterIcon } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import PriceFilter from "../PriceFilter/PriceFilter";
-
+import { LoaderCircle } from "lucide-react";
 import { useUrlParams } from "@/hooks/useUrlParams";
-import { get } from "http";
 
 type FilterOption = {
   key: string;
@@ -33,19 +32,25 @@ type FilterOption = {
 type FilterState = Record<string, string[]>;
 
 export const Filter = () => {
-  const [filters, setFilters] = useState<FilterOption[]>([]);
+  const filtersRef = useRef<FilterOption[]>([]);
   const [selected, setSelected] = useState<FilterState>({});
-
+  const [loading, setLoading] = useState(false);
   const { setMultipleParams, getAllParams } = useUrlParams();
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
     async function fetchFilters() {
+      setLoading(true);
       const res = await fetch("http://localhost:3000/api/filters");
       const data: FilterOption[] = await res.json();
-      setFilters(data);
+      if (JSON.stringify(data) !== JSON.stringify(filtersRef.current)) {
+        filtersRef.current = data;
+        console.log("filters changed");
+      }
+      setLoading(false);
     }
+
     fetchFilters();
   }, []);
 
@@ -80,29 +85,39 @@ export const Filter = () => {
       </SheetTrigger>
       <SheetContent className="bg-white" side="left">
         <ScrollArea className="h-[100vh]">
-          <SheetHeader>
-            <SheetTitle className="font-bold text-2xl">Фильтры</SheetTitle>
-          </SheetHeader>
-          <form className="px-5 space-y-4">
-            <PriceFilter />
-            {filters.map((filter) => (
-              <FilterItem itemName={filter.label} key={filter.key}>
-                {filter.variants.map((variant) => (
-                  <div key={variant} className="flex gap-2 items-center">
-                    <input
-                      id={`${filter.key}-${variant}`}
-                      type="checkbox"
-                      checked={selected[filter.key]?.includes(variant) || false}
-                      onChange={() => toggleVariant(filter.key, variant)}
-                    />
-                    <label htmlFor={`${filter.key}-${variant}`}>
-                      {variant}
-                    </label>
-                  </div>
+          <div className="flex flex-col h-[100vh]">
+            <SheetHeader>
+              <SheetTitle className="font-bold text-2xl">Фильтры</SheetTitle>
+            </SheetHeader>
+            {!loading && filtersRef.current ? (
+              <form className="px-5 space-y-4">
+                <PriceFilter />
+                {filtersRef.current.map((filter) => (
+                  <FilterItem itemName={filter.label} key={filter.key}>
+                    {filter.variants.map((variant) => (
+                      <div key={variant} className="flex gap-2 items-center">
+                        <input
+                          id={`${filter.key}-${variant}`}
+                          type="checkbox"
+                          checked={
+                            selected[filter.key]?.includes(variant) || false
+                          }
+                          onChange={() => toggleVariant(filter.key, variant)}
+                        />
+                        <label htmlFor={`${filter.key}-${variant}`}>
+                          {variant}
+                        </label>
+                      </div>
+                    ))}
+                  </FilterItem>
                 ))}
-              </FilterItem>
-            ))}
-          </form>
+              </form>
+            ) : (
+              <div className="grow flex justify-center items-center">
+                <LoaderCircle size={52} className="animate-spin " />
+              </div>
+            )}
+          </div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

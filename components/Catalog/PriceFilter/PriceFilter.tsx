@@ -2,7 +2,7 @@
 
 import { FilterItem } from "@/components/Catalog/Filter/Filter";
 import { ChangeEvent, useState, useEffect } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { useUrlParams } from "@/hooks/useUrlParams";
 

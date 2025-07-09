@@ -1,4 +1,6 @@
 import { ChargerCard } from "@/entities/chargerCard";
+import { Charger } from "@/entities/Charger";
+
 import * as fs from "fs";
 
 function getDataFrom(filename: string) {
@@ -22,4 +24,14 @@ function getPhotosById(id: number): string[] | null {
   return null;
 }
 
-export { getDataFrom, getPhotosById };
+function getChargerById(id: number): Charger | null {
+  const chargers: Charger[] = getDataFrom("chargers.json");
+
+  if (chargers) {
+    return chargers.find((charger) => charger.id === id) ?? null;
+  }
+
+  return null;
+}
+
+export { getDataFrom, getPhotosById, getChargerById };

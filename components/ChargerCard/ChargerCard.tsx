@@ -14,6 +14,9 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import { ChargerCardPhotoSkeleton } from "../Skeleton/Skeleton";
+import { SubmitProductForm } from "../SubmitProductForm/SubmitProductForm";
+import SubmitButton from "../SubmitProductForm/SubmitButton/SubmitButton";
+import { Button } from "../ui/button";
 
 const ChargerCard = ({ charger }: { charger: Charger }) => {
   const [photoURLs, setPhotoURLs] = useState<string[]>([]);
@@ -55,7 +58,7 @@ const ChargerCard = ({ charger }: { charger: Charger }) => {
   return (
     <Card
       key={charger.id}
-      className="p-4 border-1 rounded-lg border-[#e0e0e0] flex flex-col gap-2"
+      className="p-4 border-1 rounded-lg border-[#e0e0e0] flex flex-col gap-2 "
     >
       <CardHeader>
         {loading ? (
@@ -89,10 +92,25 @@ const ChargerCard = ({ charger }: { charger: Charger }) => {
       </CardHeader>
       <Separator />
       <CardContent className="flex gap-2 flex-col max-h-[200px]">
-        <h2 className="font-bold text-lg">{charger.title}</h2>
+        <h2 className="font-bold text-lg line-clamp-2">{charger.title}</h2>
         <p>{charger.countryOfOrigin}</p>
         <p>BYN {charger.price}</p>
       </CardContent>
+      <SubmitProductForm
+        productImageUrl={photoURLs[0]}
+        productTitle={charger.title}
+        productPrice={charger.price}
+        trigger={
+          <Button className="w-full border-1 border-green-500 cursor-pointer hover:bg-green-500 hover:text-white">
+            Купить
+          </Button>
+        }
+        submitButton={
+          <SubmitButton className="bg-green-500 border-1 border-green-500 text-white cursor-pointer hover:bg-white hover:text-green-500">
+            Отправить
+          </SubmitButton>
+        }
+      />
     </Card>
   );
 };

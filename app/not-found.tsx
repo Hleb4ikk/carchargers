@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Metadata } from "next";
 
 export default function NotFound() {
   const pathname = usePathname();

@@ -6,7 +6,6 @@ import {
 } from "@/components/Card/Card";
 import Search from "@/components/Search/Search";
 import Catalog from "@/components/Catalog/Catalog";
-import { Filter } from "@/components/Catalog/Filter/Filter";
 
 export default function CatalogPage() {
   return (
